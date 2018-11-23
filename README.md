@@ -1,4 +1,4 @@
-# Node-Caps
+# node-caps
 
 ## What is Caps
 
@@ -11,10 +11,10 @@
 - float
 - double
 
-## What is Node-Caps
+## What is node-caps
 Node-Caps is a wrapper of Caps using N-API
 
-## Node-Caps API Reference
+## node-caps API Reference
 ### Write Data
 `writeInt32(num)` write int32 value into this Caps object
 - `num` int32, 4 bytes
@@ -120,7 +120,7 @@ let f = ()=>
 f();
 
 ```
-`
+###
 
 
 
