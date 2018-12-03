@@ -19,6 +19,8 @@ public:
 
     static napi_value WriteInt64(napi_env env, napi_callback_info info);
 
+    static napi_value WriteUInt64(napi_env env, napi_callback_info info);
+
     static napi_value WriteFloat(napi_env env, napi_callback_info info);
 
     static napi_value WriteDouble(napi_env env, napi_callback_info info);
@@ -34,6 +36,8 @@ public:
     static napi_value ReadUInt32(napi_env env, napi_callback_info info);
 
     static napi_value ReadInt64(napi_env env, napi_callback_info info);
+
+    static napi_value ReadUInt64(napi_env env, napi_callback_info info);
 
     static napi_value ReadFloat(napi_env env, napi_callback_info info);
 

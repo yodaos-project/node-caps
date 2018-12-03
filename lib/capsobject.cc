@@ -60,6 +60,7 @@ napi_status CapsObject::Init(napi_env env, napi_value exports) {
             DECLARE_NAPI_PROPERTY("writeInt32", WriteInt32),
             DECLARE_NAPI_PROPERTY("writeUInt32", WriteUInt32),
             DECLARE_NAPI_PROPERTY("writeInt64", WriteInt64),
+            DECLARE_NAPI_PROPERTY("writeUInt64", WriteUInt64),
             DECLARE_NAPI_PROPERTY("writeFloat", WriteFloat),
             DECLARE_NAPI_PROPERTY("writeDouble", WriteDouble),
             DECLARE_NAPI_PROPERTY("writeBinary", WriteBinary),
@@ -67,6 +68,7 @@ napi_status CapsObject::Init(napi_env env, napi_value exports) {
             DECLARE_NAPI_PROPERTY("writeCaps", WriteCaps),
             DECLARE_NAPI_PROPERTY("readInt32", ReadInt32),
             DECLARE_NAPI_PROPERTY("readUInt32", ReadUInt32),
+            DECLARE_NAPI_PROPERTY("readUInt64", ReadUInt64),
             DECLARE_NAPI_PROPERTY("readInt64", ReadInt64),
             DECLARE_NAPI_PROPERTY("readFloat", ReadFloat),
             DECLARE_NAPI_PROPERTY("readDouble", ReadDouble),
@@ -234,6 +236,47 @@ napi_value CapsObject::WriteInt64(napi_env env, napi_callback_info info) {
             NAPI_CALL(env, napi_throw_error(env, "write int64 error", "Unknown Error"));
     }
     return nullptr;
+}
+
+
+napi_value CapsObject::WriteUInt64(napi_env env, napi_callback_info info) {
+  napi_value _this;
+
+  size_t argc = 1;
+  napi_value args[1];
+  //get call stack
+  NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &_this, nullptr));
+
+  NAPI_ASSERT(env, argc > 0, "Wrong number of arguments");
+
+  if (argc == 0)
+    NAPI_CALL(env, napi_throw_type_error(env, "write int64 error", "Wrong number of arguments, Expects 1"));
+  //check arguments type & count
+  napi_valuetype valuetype;
+  NAPI_CALL(env, napi_typeof(env, args[0], &valuetype));
+
+  NAPI_ASSERT(env, valuetype == napi_number, "Wrong type of arguments, Expects number");
+  if (valuetype != napi_number)
+    NAPI_CALL(env, napi_throw_type_error(env, "write int64 error", "Wrong type of arguments, Expects number"));
+
+  //get argument
+  double v;
+  NAPI_CALL(env, napi_get_value_double(env, args[0], &v));
+
+  //get obj
+  CapsObject* obj;
+  NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void**>(&obj)));
+
+  //do write
+  int32_t rst = obj->caps->write((uint64_t)v);
+  if (rst != CAPS_SUCCESS)
+  {
+    if (rst < 0 && rst >= CAPS_ERR_EOO)
+      NAPI_CALL(env, napi_throw_error(env, "write int64 error", ErrorMessage[-rst]));
+    else
+      NAPI_CALL(env, napi_throw_error(env, "write int64 error", "Unknown Error"));
+  }
+  return nullptr;
 }
 
 napi_value CapsObject::WriteFloat(napi_env env, napi_callback_info info) {
@@ -524,6 +567,42 @@ napi_value CapsObject::ReadInt64(napi_env env, napi_callback_info info) {
         NAPI_CALL(env, napi_create_int64(env, v, &result));
         return result;
     }
+}
+
+napi_value CapsObject::ReadUInt64(napi_env env, napi_callback_info info) {
+  napi_value _this;
+  NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, 0, &_this, nullptr));
+
+  //get obj
+  CapsObject* obj;
+  NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void**>(&obj)));
+
+  //do read
+  uint64_t v;
+  int32_t rst = obj->caps->read(v);
+  if (rst != CAPS_SUCCESS)
+  {
+    if (rst < 0 && rst >= CAPS_ERR_EOO)
+      NAPI_CALL(env, napi_throw_error(env, "read error", ErrorMessage[-rst]));
+    else
+      NAPI_CALL(env, napi_throw_error(env, "read error", "Unknown Error"));
+    return nullptr;
+  }
+  else
+  {
+    napi_value result;
+    if (v < INT64_MAX)
+    {
+
+      NAPI_CALL(env, napi_create_int64(env, static_cast<int64_t>(v), &result));
+      return result;
+    }
+    else
+    {
+      NAPI_CALL(env, napi_create_double(env, static_cast<double>(v), &result));
+      return result;
+    }
+  }
 }
 
 napi_value CapsObject::ReadFloat(napi_env env, napi_callback_info info) {
