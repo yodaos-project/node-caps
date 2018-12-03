@@ -1,4 +1,4 @@
-# node-caps
+# Node-Caps
 
 ## What is Caps
 
@@ -11,10 +11,10 @@
 - float
 - double
 
-## What is node-caps
+## What is Node-Caps
 Node-Caps is a wrapper of Caps using N-API
 
-## node-caps API Reference
+## Node-Caps API Reference
 ### Write Data
 `writeInt32(num)` write int32 value into this Caps object
 - `num` int32, 4 bytes
@@ -24,6 +24,9 @@ Node-Caps is a wrapper of Caps using N-API
 
 `writeInt64(num)` write int64 value into this Caps object
 - `num` int64, 8 bytes
+
+`writeUInt64(num)` write uint64 value into this Caps object
+- `num` uint64, 8 bytes
 
 `writeFloat(num)` write float value into this Caps object
 - `num` float, 4 bytes
@@ -44,6 +47,9 @@ Node-Caps is a wrapper of Caps using N-API
 `readInt64()`  read out a int64 value
 - return int64 value
 
+`readUInt64()`  read out a uint64 value
+- return uint64 value
+
 `readFloat()`  read out a float value
 - return float value
 
@@ -55,16 +61,18 @@ Node-Caps is a wrapper of Caps using N-API
 
 ### serialize and deserialize
 
-`serialize()` serialize this Caps object into UInt8Array
+`serialize(byteOrder)` serialize this Caps object into UInt8Array
+`byteOrder` Caps.NetworkByteOrder/Caps.NBO, Caps.HostByteOrder/Caps.HBO
 
-`serializeForCapsObj()` serialize this Caps object into another one
+`serializeForCapsObj(byteOrder)` serialize this Caps object into another one
+`byteOrder` Caps.NetworkByteOrder/Caps.NBO, Caps.HostByteOrder/Caps.HBO
 
 `deserialize(uint8Array)` deserialize from UInt8Array
+`uint8Array` the buff deserialize to Caps object
 
 `deserializeForCapsObj(capsObj)` deserialize from another Caps object
+`capsObj` the Caps object contain another Caps
 
-## something you need to know
-**uint64 is supported by Caps but not by Node-Caps for now**
 ## demo
 ```js
 'use strict'
@@ -120,6 +128,7 @@ let f = ()=>
 f();
 
 ```
+`
 
 
 
