@@ -2,7 +2,6 @@
 #define TEST_ADDONS_NAPI_7_FACTORY_WRAP_MYOBJECT_H_
 
 #include <node_api.h>
-#include <napi.h>
 #include "caps.h"
 #define MAX_STR_LEN 100000
 #define STR_MAX_STR_LEN "100000"
