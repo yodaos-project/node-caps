@@ -2,6 +2,7 @@
 #define TEST_ADDONS_NAPI_7_FACTORY_WRAP_MYOBJECT_H_
 
 #include <node_api.h>
+#include <napi.h>
 #include "caps.h"
 #define MAX_STR_LEN 100000
 #define STR_MAX_STR_LEN "100000"
@@ -63,12 +64,9 @@ private:
 
     static napi_value New(napi_env env, napi_callback_info info);
     static void DeleteForArray(napi_env env, void* finalize_data, void* finalize_hint);
-
-    Caps* _caps_for_hack = nullptr;
     std::shared_ptr<Caps> caps;
     napi_env env_;
     napi_ref wrapper_;
-
 };
 
 #endif  // TEST_ADDONS_NAPI_7_FACTORY_WRAP_MYOBJECT_H_

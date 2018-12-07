@@ -2,7 +2,6 @@
 #include <iostream>
 #include "capsobject.h"
 #include "common.h"
-
 /*
 #define CAPS_SUCCESS 0
 #define CAPS_ERR_INVAL -1  // 参数非法
@@ -25,18 +24,15 @@ napi_ref CapsObject::constructor;
 
 CapsObject::CapsObject() : env_(nullptr), wrapper_(nullptr) {
     caps = Caps::new_instance();
-    _caps_for_hack = caps.get();
 }
 
 
 void CapsObject::SetCaps(std::shared_ptr<Caps> _caps) {
     caps = _caps;
-    _caps_for_hack = caps.get();
 }
 
 CapsObject::~CapsObject() {
     napi_delete_reference(env_, wrapper_);
-    _caps_for_hack = nullptr;
 }
 
 void CapsObject::Destructor(napi_env env,
@@ -107,8 +103,15 @@ napi_status CapsObject::Init(napi_env env, napi_value exports) {
 napi_value CapsObject::New(napi_env env, napi_callback_info info) {
     napi_value _this;
     //get call stack
-    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &_this, nullptr));
+    size_t argc = 1;
+    napi_value args[1];
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, args, &_this, nullptr));
     CapsObject *obj = new CapsObject();
+    if (argc == 1) {
+        void *obj_input;
+        NAPI_CALL(env, napi_unwrap(env, args[0], reinterpret_cast<void**>(&obj_input)));
+        obj->SetCaps(*((std::shared_ptr<Caps>*)obj_input));
+    }
     obj->env_ = env;
     NAPI_CALL(env, napi_wrap(env,
                              _this,
