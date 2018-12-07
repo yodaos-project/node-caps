@@ -1,3 +1,4 @@
+#include <string.h>
 #include <iostream>
 #include "capsobject.h"
 #include "common.h"
