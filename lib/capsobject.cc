@@ -474,27 +474,22 @@ napi_value CapsObject::WriteCaps(napi_env env, napi_callback_info info) {
     CapsObject *obj_this;
     NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void **>(&obj_this)));
     //check arguments type & count
-    napi_valuetype valuetype;
-    NAPI_CALL(env, napi_typeof(env, args[0], &valuetype));
-    if (valuetype == napi_object) {
-        bool isCaps;
-        napi_value cons_local;
-        napi_get_reference_value(env, constructor, &cons_local);
-        NAPI_CALL(env, napi_instanceof(env, args[0], cons_local, &isCaps));
+    bool isCaps;
+    napi_value cons_local;
+    napi_get_reference_value(env, constructor, &cons_local);
+    NAPI_CALL(env, napi_instanceof(env, args[0], cons_local, &isCaps));
 
-        if (isCaps) {
-            CapsObject *obj_input;
-            NAPI_CALL(env, napi_unwrap(env, args[0], reinterpret_cast<void **>(&obj_input)));
-            //do write
-            int32_t wrst = obj_this->caps->write(obj_input->caps);
-            if (wrst != CAPS_SUCCESS) {
-                if (wrst < 0 && wrst >= CAPS_ERR_EOO)
-                    NAPI_CALL(env, napi_throw_error(env, "write caps error", ErrorMessage[-wrst]));
-                else
-                    NAPI_CALL(env, napi_throw_error(env, "write caps error", "Unknown Error"));
-            }
-        } else
-            NAPI_CALL(env, napi_throw_type_error(env, "write caps error", "Wrong type of arguments, Expects Caps"));
+    if (isCaps) {
+        CapsObject *obj_input;
+        NAPI_CALL(env, napi_unwrap(env, args[0], reinterpret_cast<void **>(&obj_input)));
+        //do write
+        int32_t wrst = obj_this->caps->write(obj_input->caps);
+        if (wrst != CAPS_SUCCESS) {
+            if (wrst < 0 && wrst >= CAPS_ERR_EOO)
+                NAPI_CALL(env, napi_throw_error(env, "write caps error", ErrorMessage[-wrst]));
+            else
+                NAPI_CALL(env, napi_throw_error(env, "write caps error", "Unknown Error"));
+        }
     } else
         NAPI_CALL(env, napi_throw_type_error(env, "write caps error", "Wrong type of arguments, Expects Caps"));
     return nullptr;
@@ -827,6 +822,7 @@ napi_value CapsObject::Deserialize(napi_env env, napi_callback_info info) {
 
         //do write
         ds_rst = Caps::parse(datap, (uint32_t) length, obj->caps);
+
         if (ds_rst != CAPS_SUCCESS) {
             if (ds_rst < 0 && ds_rst >= CAPS_ERR_EOO)
                 NAPI_CALL(env, napi_throw_error(env, "deserialize error", ErrorMessage[-ds_rst]));
