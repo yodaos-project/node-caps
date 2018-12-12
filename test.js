@@ -1,6 +1,6 @@
 'use strict'
 
-const Caps = require("./build/Debug/Caps").Caps
+const Caps = require("./build/Release/Caps").Caps
 
 let f = ()=>
 {

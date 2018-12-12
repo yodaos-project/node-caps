@@ -1,5 +1,5 @@
 {
-  "name": "node-caps",
+  "name": "caps",
   "version": "1.0.0",
   "description": "Caps wrapper using N-API",
   "main": "test.js",
@@ -16,5 +16,13 @@
     "lib": "lib"
   },
   "devDependencies": {},
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shadow-node/Node-Caps.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shadow-node/Node-Caps/issues"
+  },
+  "homepage": "https://github.com/shadow-node/Node-Caps#readme"
 }
