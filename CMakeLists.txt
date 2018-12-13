@@ -8,7 +8,11 @@ file(GLOB SOURCE_FILES "lib/*.cc" "lib/*.h")
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+target_link_libraries(${PROJECT_NAME}
+  ${CMAKE_JS_LIB}
+  -lcaps
+  -liotjs
+)
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${CMAKE_INCLUDE_DIR}/usr/include/shadow-node
   ${CMAKE_INCLUDE_DIR}/usr/include/caps
