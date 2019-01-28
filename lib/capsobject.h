@@ -31,8 +31,6 @@ public:
 
     static napi_value WriteCaps(napi_env env, napi_callback_info info);
 
-    static napi_value WriteVoid(napi_env env, napi_callback_info info);
-
     static napi_value ReadInt32(napi_env env, napi_callback_info info);
 
     static napi_value ReadUInt32(napi_env env, napi_callback_info info);
@@ -50,8 +48,6 @@ public:
     static napi_value ReadString(napi_env env, napi_callback_info info);
 
     static napi_value ReadCaps(napi_env env, napi_callback_info info);
-
-    static napi_value ReadVoid(napi_env env, napi_callback_info info);
 
     static napi_value Serialize(napi_env env, napi_callback_info info);
 
