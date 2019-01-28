@@ -63,6 +63,7 @@ napi_status CapsObject::Init(napi_env env, napi_value exports) {
             DECLARE_NAPI_PROPERTY("writeBinary", WriteBinary),
             DECLARE_NAPI_PROPERTY("writeString", WriteString),
             DECLARE_NAPI_PROPERTY("writeCaps", WriteCaps),
+            DECLARE_NAPI_PROPERTY("writeVoid", WriteVoid),
             DECLARE_NAPI_PROPERTY("readInt32", ReadInt32),
             DECLARE_NAPI_PROPERTY("readUInt32", ReadUInt32),
             DECLARE_NAPI_PROPERTY("readUInt64", ReadUInt64),
@@ -72,6 +73,7 @@ napi_status CapsObject::Init(napi_env env, napi_value exports) {
             DECLARE_NAPI_PROPERTY("readBinary", ReadBinary),
             DECLARE_NAPI_PROPERTY("readString", ReadString),
             DECLARE_NAPI_PROPERTY("readCaps", ReadCaps),
+            DECLARE_NAPI_PROPERTY("readVoid", ReadVoid),
             DECLARE_NAPI_PROPERTY("serialize", Serialize),
             DECLARE_NAPI_PROPERTY("deserialize", Deserialize),
             {"NetWorkByteOrder", nullptr, nullptr, nullptr, nullptr, nbo, napi_enumerable, nullptr},
@@ -496,6 +498,27 @@ napi_value CapsObject::WriteCaps(napi_env env, napi_callback_info info) {
 
 }
 
+napi_value CapsObject::WriteVoid(napi_env env, napi_callback_info info) {
+    napi_value _this;
+
+    //get call stack
+    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &_this, nullptr));
+
+    //get obj
+    CapsObject *obj;
+    NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void **>(&obj)));
+
+    //do write
+    int32_t rst = obj->caps->write();
+    if (rst != CAPS_SUCCESS) {
+        if (rst < 0 && rst >= CAPS_ERR_EOO)
+            NAPI_CALL(env, napi_throw_error(env, "write void error", ErrorMessage[-rst]));
+        else
+            NAPI_CALL(env, napi_throw_error(env, "write int32 error", "Unknown Error"));
+    }
+    return nullptr;
+}
+
 napi_value CapsObject::ReadInt32(napi_env env, napi_callback_info info) {
     napi_value _this;
     NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &_this, nullptr));
@@ -731,6 +754,27 @@ napi_value CapsObject::ReadCaps(napi_env env, napi_callback_info info) {
         obj_new->SetCaps(v);
         return newCaps;
     }
+}
+
+napi_value CapsObject::ReadVoid(napi_env env, napi_callback_info info) {
+    napi_value _this;
+    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &_this, nullptr));
+
+    //get obj
+    CapsObject *obj;
+    NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void **>(&obj)));
+
+    //do read
+    int32_t rst = obj->caps->read();
+    if (rst != CAPS_SUCCESS) {
+        if (rst < 0 && rst >= CAPS_ERR_EOO)
+            NAPI_CALL(env, napi_throw_error(env, "read error", ErrorMessage[-rst]));
+        else
+            NAPI_CALL(env, napi_throw_error(env, "read error", "Unknown Error"));
+    }
+    napi_value result;
+    napi_get_undefined(env, &result);
+    return result;
 }
 
 napi_value CapsObject::Serialize(napi_env env, napi_callback_info info) {
