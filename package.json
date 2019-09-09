@@ -2,27 +2,16 @@
   "name": "caps",
   "version": "1.0.0",
   "description": "Caps wrapper using N-API",
-  "main": "test.js",
+  "main": "index.js",
+  "engines": {
+    "shadow-node": "0.11.7"
+  },
   "scripts": {
-    "install": "node-gyp rebuild"
+    "install": "script/install && script/build"
   },
   "author": "feely@outlook.com",
-  "dependencies": {
-    "node-addon-api": "^1.6.0",
-    "node-gyp": "^3.8.0"
-  },
-  "gypfile": true,
   "directories": {
     "lib": "lib"
   },
-  "devDependencies": {},
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/shadow-node/Node-Caps.git"
-  },
-  "bugs": {
-    "url": "https://github.com/shadow-node/Node-Caps/issues"
-  },
-  "homepage": "https://github.com/shadow-node/Node-Caps#readme"
+  "license": "Apache-2.0"
 }
