@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -ex
+
+rm -rf deps/cmake-modules
+rm -rf deps/mutils
+rm -rf out

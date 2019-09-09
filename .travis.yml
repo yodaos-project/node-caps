@@ -1,0 +1,24 @@
+stages:
+- test
+- name: deploy
+  if: tag IS present
+
+
+language: node_js
+node_js:
+- '10'
+os: linux
+dist: trusty
+
+install:
+- script/ci-deps
+- script/install-shadow-node --global
+
+script:
+- yarn
+- script/build --include-dir /
+
+jobs:
+  include:
+  - stage: test
+    os: linux
