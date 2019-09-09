@@ -7,7 +7,8 @@
     "shadow-node": "0.11.7"
   },
   "scripts": {
-    "install": "script/install && script/build"
+    "install": "script/install && script/build",
+    "test": "script/test"
   },
   "author": "feely@outlook.com",
   "directories": {

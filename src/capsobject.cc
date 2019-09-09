@@ -1,5 +1,4 @@
 #include <string.h>
-#include <iostream>
 #include "capsobject.h"
 #include "common.h"
 /*
@@ -839,6 +838,5 @@ napi_value CapsObject::Deserialize(napi_env env, napi_callback_info info) {
 void CapsObject::DeleteForArray(napi_env env, void *finalize_data, void *) {
     auto *deldata = reinterpret_cast<uint8_t *>(finalize_data);
     delete[] deldata;
-    std::cout << "array data deleted" << std::endl;
 }
 

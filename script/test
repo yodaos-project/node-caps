@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+for it in test/*.test.js; do
+  iotjs $it
+done

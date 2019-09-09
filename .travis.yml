@@ -17,6 +17,7 @@ install:
 script:
 - yarn
 - script/build --include-dir /
+- yarn test
 
 jobs:
   include:
