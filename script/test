@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -ex
 
 for it in test/*.test.js; do
   iotjs $it
