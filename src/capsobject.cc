@@ -761,30 +761,23 @@ napi_value CapsObject::Serialize(napi_env env, napi_callback_info info) {
 
     //do serialize
     int32_t size = obj->caps->serialize(nullptr, 0);
-    auto buff = new uint8_t[size];
+    uint8_t* buff;
+    napi_value result;
+    if (napi_create_buffer(env, size_t(size), (void**)&buff, &result) != napi_ok) {
+      GET_AND_THROW_LAST_ERROR(env);
+      return nullptr;
+    }
 
     int rst = obj->caps->serialize(buff, static_cast<uint32_t>(size), static_cast<uint32_t>(bo));
     if (size != rst) {
-        //delete[] reinterpret_cast<char*>(buff);
         if (rst < 0 && rst >= CAPS_ERR_EOO)
             NAPI_CALL(env, napi_throw_error(env, "serialize error", ErrorMessage[-rst]));
         else
             NAPI_CALL(env, napi_throw_error(env, "serialize error", "Unknown Error"));
         return nullptr;
-    } else {
-        napi_value result;
-        napi_value output_buffer;
-        if (napi_create_external_arraybuffer(
-                env, buff, (size_t) size, DeleteForArray, nullptr, &output_buffer) != napi_ok) {
-            GET_AND_THROW_LAST_ERROR(env);
-            return nullptr;
-        } else {
-            NAPI_CALL(env,
-                      napi_create_typedarray(env, napi_uint8_array, size / sizeof(uint8_t), output_buffer, 0, &result));
-            return result;
-        }
     }
 
+    return result;
 }
 
 napi_value CapsObject::Deserialize(napi_env env, napi_callback_info info) {
@@ -802,22 +795,15 @@ napi_value CapsObject::Deserialize(napi_env env, napi_callback_info info) {
     NAPI_CALL(env, napi_unwrap(env, _this, reinterpret_cast<void **>(&obj)));
 
     //check arguments type & count
-    bool istypedarray;
-    NAPI_CALL(env, napi_is_typedarray(env, args[0], &istypedarray));
+    bool isbuffer;
+    NAPI_CALL(env, napi_is_buffer(env, args[0], &isbuffer));
 
     int32_t ds_rst;
-    if (istypedarray) {
+    if (isbuffer) {
         //get argument Uint8Array
-        napi_typedarray_type type;
-        napi_value in_array_buffer;
-        size_t byte_offset = 0;
         size_t length;
         void *datap;
-        NAPI_CALL(env, napi_get_typedarray_info(
-                env, args[0], &type, &length, &datap, &in_array_buffer, &byte_offset));
-        if (type != napi_uint8_array)
-            NAPI_CALL(env,
-                      napi_throw_type_error(env, "argument type error", "Wrong type of arguments, Expects Uint8Array"));
+        NAPI_CALL(env, napi_get_buffer_info(env, args[0], &datap, &length));
 
         //do write
         ds_rst = Caps::parse(datap, (uint32_t) length, obj->caps);
@@ -830,7 +816,7 @@ napi_value CapsObject::Deserialize(napi_env env, napi_callback_info info) {
         }
     } else {
         NAPI_CALL(env,
-                  napi_throw_type_error(env, "argument type error", "Wrong type of arguments, Expects Uint8Array"));
+                  napi_throw_type_error(env, "argument type error", "Wrong type of arguments, Expects Node::Buffer"));
     }
     return nullptr;
 }
